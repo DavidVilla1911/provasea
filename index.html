@@ -3,16 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://www.gstatic.com 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
-  <title>Solana Phantom Wallet Integration</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; 
+    script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com;
+    style-src 'self' 'unsafe-inline';
+    connect-src 'self' https://api.mainnet-beta.solana.com;">
+  <title>Sea Cucumber Presale</title>
 </head>
 <body>
-  <h1>Welcome to Solana Presale</h1>
+  <h1>Sea Cucumber Presale</h1>
   <button id="connectButton">Connect Wallet</button>
-  <div id="walletInfo"></div>
+  <p id="status">Wallet not connected</p>
+  <button id="buyButton" disabled>Buy Sea Cucumber</button>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/solana-web3.js/1.0.0-beta.7/solana-web3.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

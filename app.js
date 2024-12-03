@@ -1,59 +1,58 @@
-const solanaWeb3 = window.solanaWeb3; // Assicuriamoci che Phantom sia abilitato
-const PROGRAM_ID = new solanaWeb3.PublicKey("dRxFhMb8nojoWBLLRKMUHypwhHJYQ8AznUqn9S7d64v"); // Sostituisci con l'ID del programma
-const CONNECTION = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl("mainnet-beta"));
-
+// Variabili globali
 let walletPublicKey = null;
+
+// ID Programma e Wallet (confermati da te)
+const PROGRAM_ID = "tuo_program_id";
+const DESTINATION_WALLET = "tuo_wallet_pubkey";
 
 // Funzione per connettere il wallet
 async function connectWallet() {
+  console.log("Tentativo di connessione al wallet...");
   try {
     const response = await window.solana.connect();
     walletPublicKey = response.publicKey;
     document.getElementById("status").innerText = `Connected: ${walletPublicKey}`;
     document.getElementById("buyButton").disabled = false;
-    console.log("Wallet connected:", walletPublicKey.toBase58());
+    console.log("Wallet connesso:", walletPublicKey.toBase58());
   } catch (err) {
-    console.error("Wallet connection failed:", err);
-    alert("Failed to connect wallet. Please try again.");
+    console.error("Errore di connessione:", err);
+    alert("Errore durante la connessione al wallet.");
   }
 }
 
-// Funzione per acquistare Sea Cucumber
-async function buySeaCucumber() {
+// Funzione per acquistare token
+async function purchaseTokens() {
   if (!walletPublicKey) {
-    alert("Please connect your wallet first!");
+    alert("Connetti il wallet prima di acquistare.");
     return;
   }
 
   try {
-    // Costruisci una transazione
-    const transaction = new solanaWeb3.Transaction().add(
-      new solanaWeb3.TransactionInstruction({
-        keys: [{ pubkey: walletPublicKey, isSigner: true, isWritable: false }],
-        programId: PROGRAM_ID,
-        data: Buffer.from([]), // Modifica qui se il tuo contratto richiede dati specifici
+    const transaction = new web3.Transaction().add(
+      web3.SystemProgram.transfer({
+        fromPubkey: walletPublicKey,
+        toPubkey: DESTINATION_WALLET,
+        lamports: web3.LAMPORTS_PER_SOL * 0.01, // Modifica quantità di SOL qui
       })
     );
 
-    // Aggiungi blockhash e fee payer
-    const { blockhash } = await CONNECTION.getLatestBlockhash();
-    transaction.recentBlockhash = blockhash;
     transaction.feePayer = walletPublicKey;
+    const blockhash = await web3.Connection("https://api.mainnet-beta.solana.com").getLatestBlockhash();
+    transaction.recentBlockhash = blockhash.blockhash;
 
-    // Firma e invia la transazione
+    // Firma la transazione con Phantom
     const signedTransaction = await window.solana.signTransaction(transaction);
-    const signature = await CONNECTION.sendRawTransaction(signedTransaction.serialize());
+    console.log("Transazione firmata:", signedTransaction);
 
-    // Conferma la transazione
-    await CONNECTION.confirmTransaction(signature);
-    alert("Sea Cucumber purchased successfully!");
-    console.log("Transaction signature:", signature);
+    // Invia la transazione alla blockchain
+    const signature = await new web3.Connection("https://api.mainnet-beta.solana.com").sendRawTransaction(
+      signedTransaction.serialize()
+    );
+
+    console.log("Transazione inviata:", signature);
+    alert("Acquisto completato con successo!");
   } catch (err) {
-    console.error("Transaction failed:", err);
-    alert("Failed to purchase Sea Cucumber. Please try again.");
+    console.error("Errore durante l'acquisto:", err);
+    alert("Errore durante l'acquisto.");
   }
 }
-
-// Associa eventi ai pulsanti
-document.getElementById("connectButton").addEventListener("click", connectWallet);
-document.getElementById("buyButton").addEventListener("click", buySeaCucumber);

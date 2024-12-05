@@ -2,8 +2,8 @@
 let walletPublicKey = null;
 
 // ID Programma e Wallet (confermati da te)
-const PROGRAM_ID = "tuo_program_id";
-const DESTINATION_WALLET = "tuo_wallet_pubkey";
+const PROGRAM_ID = "dRxFhMb8nojoWBLLRKMUHypwhHJYQ8AznUqn9S7d64v";
+const DESTINATION_WALLET = "5ZgZuZNTb3vH7pEq36d9pDyHATcmSf2obD4HbfRagHqx";
 
 // Funzione per connettere il wallet
 async function connectWallet() {
